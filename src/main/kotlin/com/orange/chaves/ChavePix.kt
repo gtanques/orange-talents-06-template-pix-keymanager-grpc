@@ -4,7 +4,6 @@ import com.orange.TipoDeConta
 import com.orange.contas.ContaAssociada
 import java.util.*
 import javax.persistence.*
-import javax.validation.Valid
 import javax.validation.constraints.NotNull
 
 @Entity
@@ -23,7 +22,7 @@ data class ChavePix(
     @field:NotNull @Enumerated(EnumType.STRING)
     val tipoDeConta: TipoDeConta,
 
-    @field:Valid @Embedded
+    @Embedded
     val conta: ContaAssociada,
 )
 

@@ -1,5 +1,8 @@
 package com.orange.contas
 
+import com.orange.anotacoes.ValidaChavesPix
+
+@ValidaChavesPix
 data class ContaAssociadaResponse(
     val tipo: String,
     val instituicao: InstituicaoResponse,

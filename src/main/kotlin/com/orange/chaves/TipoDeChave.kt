@@ -9,9 +9,6 @@ enum class TipoDeChave {
             if (chave.isNullOrBlank()) {
                 return false
             }
-            if (!chave.matches("[0-9]+".toRegex())) {
-                return false
-            }
 
             return CPFValidator().run {
                 initialize(null)
@@ -25,7 +22,7 @@ enum class TipoDeChave {
                 return false
             }
 
-            return !chave.matches("^\\+[1-9][0-9]\\d{1,14}\$".toRegex())
+            return chave.matches("^+[1-9][0-9]\\d{1,14}\$".toRegex())
         }
     },
     EMAIL {
