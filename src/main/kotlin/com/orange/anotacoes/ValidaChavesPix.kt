@@ -4,7 +4,8 @@ import com.orange.chaves.NovaChavePix
 import javax.inject.Singleton
 import javax.validation.*
 import kotlin.annotation.AnnotationRetention.RUNTIME
-import kotlin.annotation.AnnotationTarget.*
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.TYPE
 import kotlin.reflect.KClass
 
 @ReportAsSingleViolation

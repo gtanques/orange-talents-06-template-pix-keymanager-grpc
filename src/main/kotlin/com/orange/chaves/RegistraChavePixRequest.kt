@@ -3,9 +3,9 @@ package com.orange.chaves
 import com.orange.RegistraChavePixRequest
 import com.orange.TipoDeChave.UNKNOWN_TIPO_DE_CHAVE
 import com.orange.TipoDeConta
-import com.orange.TipoDeConta.*
+import com.orange.TipoDeConta.UNKNOWN_TIPO_DE_CONTA
 
-fun RegistraChavePixRequest.toModel(): NovaChavePix {
+fun RegistraChavePixRequest.paraChavePix(): NovaChavePix {
     return NovaChavePix(
         clienteId = clienteId,
         tipoDeChave = when(tipoDeChave){

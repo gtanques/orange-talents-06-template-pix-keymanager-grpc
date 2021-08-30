@@ -3,7 +3,8 @@ package com.orange.chaves
 import com.orange.TipoDeConta
 import com.orange.anotacoes.ValidaChavesPix
 import com.orange.anotacoes.ValidaUUID
-import com.orange.chaves.TipoDeChave.*
+import com.orange.chaves.TipoDeChave.ALEATORIA
+import com.orange.chaves.TipoDeChave.valueOf
 import com.orange.contas.ContaAssociada
 import io.micronaut.core.annotation.Introspected
 import java.util.*
@@ -21,7 +22,7 @@ data class NovaChavePix(
     @field:NotNull val tipoDeConta: TipoDeConta?
 ) {
 
-    fun toModel(contaResponse: ContaAssociada): ChavePix {
+    fun paraChavePix(contaResponse: ContaAssociada): ChavePix {
         return ChavePix(
             clienteId = UUID.fromString(this.clienteId).toString(),
             tipoDeChave = valueOf(this.tipoDeChave!!.name),

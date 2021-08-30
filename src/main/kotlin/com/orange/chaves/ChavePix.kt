@@ -2,6 +2,7 @@ package com.orange.chaves
 
 import com.orange.TipoDeConta
 import com.orange.contas.ContaAssociada
+import java.time.Instant
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -9,9 +10,6 @@ import javax.validation.constraints.NotNull
 @Entity
 @Table(uniqueConstraints = [UniqueConstraint(name = "uk_chave_pix", columnNames = ["chave"])])
 data class ChavePix(
-    @Id
-    val id: String = UUID.randomUUID().toString(),
-
     @Column(nullable = false)
     val clienteId: String,
 
@@ -26,6 +24,13 @@ data class ChavePix(
 
     @Embedded
     val conta: ContaAssociada,
-)
+){
+    @Id
+    val id: String = UUID.randomUUID().toString()
+
+    @Column(updatable = false, nullable = false)
+    @field:NotNull
+    private val criadoEm : Instant = Instant.now()
+}
 
 

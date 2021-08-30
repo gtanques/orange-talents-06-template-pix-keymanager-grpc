@@ -1,7 +1,6 @@
 package com.orange.exception
 
 import io.grpc.Status
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.validation.ConstraintViolationException
