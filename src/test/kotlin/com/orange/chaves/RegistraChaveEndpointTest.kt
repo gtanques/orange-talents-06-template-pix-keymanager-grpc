@@ -122,7 +122,6 @@ internal class RegistraChaveEndpointTest {
 
         // verificacao
         assertEquals(Status.INVALID_ARGUMENT.code, erro.status.code)
-        assertEquals("Dados inválidos!", erro.status.description)
     }
 
     @MockBean(DadosContaItauClient::class)
