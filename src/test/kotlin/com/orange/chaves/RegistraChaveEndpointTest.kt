@@ -75,6 +75,22 @@ internal class RegistraChaveEndpointTest(
 
     @Test
     fun `nao deve registrar chave pix quando chave existente`() {
+        `when`(itauClient.buscarContaPorTipo(idCliente = uuid, tipo = TipoDeConta.CONTA_CORRENTE.name))
+            .thenReturn(HttpResponse.ok(dadosContaResponse))
+
+        val response = serviceGrpc.registra(
+            RegistraChavePixRequest.newBuilder()
+                .setClienteId(uuid)
+                .setTipoDeChave(TipoDeChave.EMAIL)
+                .setChave("yuri@gmail.com")
+                .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
+                .build()
+        )
+
+        val chaveDuplicada = response
+
+
+
     }
 
     @Test
