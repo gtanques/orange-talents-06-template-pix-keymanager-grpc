@@ -1,6 +1,5 @@
 package com.orange.chaves
 
-import io.micronaut.validation.validator.constraints.EmailValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator
 
 enum class TipoDeChave {
@@ -31,10 +30,7 @@ enum class TipoDeChave {
                 return false
             }
 
-            return EmailValidator().run {
-                initialize(null)
-                isValid(chave, null)
-            }
+            return chave.matches("[a-zA-Z0-9+._%-+]{1,256}@[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}(\\.[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25})+".toRegex())
         }
     },
     ALEATORIA {
