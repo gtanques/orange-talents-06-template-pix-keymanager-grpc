@@ -9,4 +9,4 @@ import kotlin.annotation.AnnotationTarget.*
 @Target(CLASS, FILE, FUNCTION)
 @Around
 @JsonSubTypes.Type(InterceptorExceptionHandler::class)
-annotation class ErroHandler()
+annotation class ErroHandler

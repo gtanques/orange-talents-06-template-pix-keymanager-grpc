@@ -31,8 +31,7 @@ import java.util.*
 import javax.inject.Inject
 
 @MicronautTest(transactional = false)
-internal class RegistraChaveEndpointTest(
-) {
+internal class RegistraChaveEndpointTest {
     @Inject
     lateinit var repository: ChavePixRepository
 
@@ -42,7 +41,7 @@ internal class RegistraChaveEndpointTest(
     @Inject
     lateinit var itauClient: DadosContaItauClient
 
-    var uuid = UUID.randomUUID().toString()
+    private var uuid = UUID.randomUUID().toString()
     private val dadosContaResponse: ContaAssociadaResponse = ContaAssociadaResponse(
         tipo = TipoDeConta.CONTA_CORRENTE.name,
         instituicao = InstituicaoResponse("UNIBANCO ITAU SA", "60701190"),
@@ -50,6 +49,13 @@ internal class RegistraChaveEndpointTest(
         numero = "291900",
         titular = TitularResponse("Yuri Matheus", "86135457004")
     )
+
+    private val registraRequest = RegistraChavePixRequest.newBuilder()
+        .setClienteId(uuid)
+        .setTipoDeChave(TipoDeChave.EMAIL)
+        .setChave("yuri@gmail.com")
+        .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
+        .build()
 
     @BeforeEach
     fun setup() {
@@ -63,14 +69,7 @@ internal class RegistraChaveEndpointTest(
             .thenReturn(HttpResponse.ok(dadosContaResponse))
 
         // acao
-        val response = serviceGrpc.registra(
-            RegistraChavePixRequest.newBuilder()
-                .setClienteId(uuid)
-                .setTipoDeChave(TipoDeChave.EMAIL)
-                .setChave("yuri@gmail.com")
-                .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
-                .build()
-        )
+        val response = serviceGrpc.registra(registraRequest)
 
         // validacao
         with(response) {
@@ -92,21 +91,10 @@ internal class RegistraChaveEndpointTest(
             )
         )
 
-        `when`(itauClient.buscarContaPorTipo(idCliente = uuid, tipo = TipoDeConta.CONTA_CORRENTE.name))
-            .thenReturn(HttpResponse.ok(dadosContaResponse))
-
         // acao
-        val erro = assertThrows<StatusRuntimeException> {
-            serviceGrpc.registra(
-                RegistraChavePixRequest.newBuilder()
-                    .setClienteId(uuid)
-                    .setTipoDeChave(TipoDeChave.EMAIL)
-                    .setChave("yuri@gmail.com")
-                    .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
-                    .build()
-            )
-        }
+        val erro = assertThrows<StatusRuntimeException> { serviceGrpc.registra(registraRequest) }
 
+        //verificacao
         assertEquals(Status.ALREADY_EXISTS.code, erro.status.code)
         assertEquals("ChavePix 'yuri@gmail.com' existente", erro.status.description)
 
@@ -114,10 +102,27 @@ internal class RegistraChaveEndpointTest(
 
     @Test
     fun `nao deve registrar chave pix quando nao encontrar conta vinculada`() {
+
+        // cenario
+        `when`(itauClient.buscarContaPorTipo(idCliente = uuid, tipo = TipoDeConta.CONTA_CORRENTE.name))
+            .thenReturn(HttpResponse.notFound())
+
+        // acao
+        val erro = assertThrows<StatusRuntimeException> { serviceGrpc.registra(registraRequest) }
+
+        //verificacao
+        assertEquals(Status.NOT_FOUND.code, erro.status.code)
+        assertEquals("Cliente não encontrado no Itau", erro.status.description)
     }
 
     @Test
     fun `nao deve registrar chave pix quando parametros invalidos`() {
+        // acao
+        val erro = assertThrows<StatusRuntimeException> { serviceGrpc.registra(RegistraChavePixRequest.newBuilder().build())}
+
+        // verificacao
+        assertEquals(Status.INVALID_ARGUMENT.code, erro.status.code)
+        assertEquals("Dados inválidos!", erro.status.description)
     }
 
     @MockBean(DadosContaItauClient::class)

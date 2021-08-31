@@ -38,7 +38,7 @@ class DefaultExceptionHandler : ExceptionHandler<Exception> {
             is ChavePixJaCadastradaException -> Status.ALREADY_EXISTS.withDescription(e.message)
             is ContaNaoEncontradaException -> Status.NOT_FOUND.withDescription(e.message)
             is ConstraintViolationException -> Status.INVALID_ARGUMENT.withDescription(e.message)
-            else -> Status.UNKNOWN
+            else -> Status.UNKNOWN.withDescription(e.message)
         }
         return ExceptionHandler.StatusWithDetails(status.withCause(e))
     }

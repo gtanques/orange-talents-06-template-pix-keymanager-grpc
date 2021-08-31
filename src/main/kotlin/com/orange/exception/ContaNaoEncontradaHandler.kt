@@ -7,7 +7,7 @@ import javax.inject.Singleton
 class ContaNaoEncontradaHandler : ExceptionHandler<ContaNaoEncontradaException> {
     override fun handle(e: ContaNaoEncontradaException): ExceptionHandler.StatusWithDetails {
         return ExceptionHandler.StatusWithDetails(
-            Status.INVALID_ARGUMENT
+            Status.NOT_FOUND
                 .withDescription(e.message)
                 .withCause(e)
         )

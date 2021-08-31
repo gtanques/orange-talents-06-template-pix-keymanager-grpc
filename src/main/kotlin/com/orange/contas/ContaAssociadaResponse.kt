@@ -41,7 +41,6 @@ data class ContaAssociadaResponse(
         result = 31 * result + titular.hashCode()
         return result
     }
-
 }
 
 data class InstituicaoResponse(val nome: String, val ispb: String)

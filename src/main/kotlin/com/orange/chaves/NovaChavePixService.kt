@@ -35,7 +35,7 @@ class NovaChavePixService(
         }
 
         logger.info(response.toString())
-        val conta = response.body().toModel()
+        val conta = response.body()!!.toModel()
         val chave = novaChavePix.paraChavePix(conta)
 
         repository.save(chave)
