@@ -5,11 +5,14 @@ import com.orange.KeymanagerGrpcServiceGrpc.newBlockingStub
 import com.orange.RegistraChavePixRequest
 import com.orange.TipoDeChave
 import com.orange.TipoDeConta
+import com.orange.chaves.TipoDeChave.EMAIL
 import com.orange.contas.ContaAssociadaResponse
 import com.orange.contas.InstituicaoResponse
 import com.orange.contas.TitularResponse
 import com.orange.integracoes.DadosContaItauClient
 import io.grpc.ManagedChannel
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
 import io.micronaut.context.annotation.Bean
 import io.micronaut.context.annotation.Factory
 import io.micronaut.grpc.annotation.GrpcChannel
@@ -21,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import java.util.*
@@ -31,8 +35,10 @@ internal class RegistraChaveEndpointTest(
 ) {
     @Inject
     lateinit var repository: ChavePixRepository
+
     @Inject
     lateinit var serviceGrpc: KeymanagerGrpcServiceBlockingStub
+
     @Inject
     lateinit var itauClient: DadosContaItauClient
 
@@ -75,21 +81,34 @@ internal class RegistraChaveEndpointTest(
 
     @Test
     fun `nao deve registrar chave pix quando chave existente`() {
+        // cenario
+        repository.save(
+            ChavePix(
+                uuid,
+                EMAIL,
+                "yuri@gmail.com",
+                TipoDeConta.CONTA_CORRENTE,
+                dadosContaResponse.toModel()
+            )
+        )
+
         `when`(itauClient.buscarContaPorTipo(idCliente = uuid, tipo = TipoDeConta.CONTA_CORRENTE.name))
             .thenReturn(HttpResponse.ok(dadosContaResponse))
 
-        val response = serviceGrpc.registra(
-            RegistraChavePixRequest.newBuilder()
-                .setClienteId(uuid)
-                .setTipoDeChave(TipoDeChave.EMAIL)
-                .setChave("yuri@gmail.com")
-                .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
-                .build()
-        )
+        // acao
+        val erro = assertThrows<StatusRuntimeException> {
+            serviceGrpc.registra(
+                RegistraChavePixRequest.newBuilder()
+                    .setClienteId(uuid)
+                    .setTipoDeChave(TipoDeChave.EMAIL)
+                    .setChave("yuri@gmail.com")
+                    .setTipoDeConta(TipoDeConta.CONTA_CORRENTE)
+                    .build()
+            )
+        }
 
-        val chaveDuplicada = response
-
-
+        assertEquals(Status.ALREADY_EXISTS.code, erro.status.code)
+        assertEquals("ChavePix 'yuri@gmail.com' existente", erro.status.description)
 
     }
 
