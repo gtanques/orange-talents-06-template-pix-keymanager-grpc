@@ -10,8 +10,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import javax.validation.ConstraintViolationException
 
-@ErroHandler
 @Singleton
+@ErroHandler
 class RegistraChaveEndpoint(@Inject private val service: NovaChavePixService) : KeymanagerGrpcServiceImplBase() {
     override fun registra(
         request: RegistraChavePixRequest,

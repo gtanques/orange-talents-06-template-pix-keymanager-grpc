@@ -16,9 +16,9 @@ import javax.validation.constraints.Size
 @Introspected
 data class NovaChavePix(
     @ValidaUUID
-    @field:NotBlank val clienteId: String?,
+    @field:NotBlank val clienteId: String,
     @field:NotNull val tipoDeChave: TipoDeChave?,
-    @field:Size(max = 77) val chave: String?,
+    @field:Size(max = 77) val chave: String,
     @field:NotNull val tipoDeConta: TipoDeConta?
 ) {
 
@@ -26,7 +26,7 @@ data class NovaChavePix(
         return ChavePix(
             clienteId = UUID.fromString(this.clienteId).toString(),
             tipoDeChave = valueOf(this.tipoDeChave!!.name),
-            chave = if(this.tipoDeChave == ALEATORIA) UUID.randomUUID().toString() else this.chave!!,
+            chave = if(this.tipoDeChave == ALEATORIA) UUID.randomUUID().toString() else this.chave,
             tipoDeConta = TipoDeConta.valueOf(this.tipoDeConta!!.name),
             conta = contaResponse
         )

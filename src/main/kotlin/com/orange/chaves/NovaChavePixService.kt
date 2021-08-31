@@ -5,15 +5,12 @@ import com.orange.exception.ChavePixJaCadastradaException
 import com.orange.exception.ContaNaoEncontradaException
 import com.orange.integracoes.DadosContaItauClient
 import io.grpc.stub.StreamObserver
-import io.micronaut.validation.Validated
 import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.transaction.Transactional
-import javax.validation.Valid
 
 @Singleton
-@Validated
 class NovaChavePixService(
     @Inject private val repository: ChavePixRepository,
     @Inject private val dadosContaItauClient: DadosContaItauClient
@@ -22,14 +19,14 @@ class NovaChavePixService(
 
     @Transactional
     fun registra(
-        @Valid novaChavePix: NovaChavePix,
+        novaChavePix: NovaChavePix,
         responseObserver: StreamObserver<RegistraChavePixResponse>
     ): ChavePix? {
         if (repository.existsByChave(novaChavePix.chave)) {
             throw ChavePixJaCadastradaException("ChavePix '${novaChavePix.chave}' existente")
         }
 
-        val response = dadosContaItauClient.buscarContaPorTipo(novaChavePix.clienteId!!, novaChavePix.tipoDeConta!!.name)
+        val response = dadosContaItauClient.buscarContaPorTipo(novaChavePix.clienteId, novaChavePix.tipoDeConta!!.name)
         if(response.status.code != 200){
             throw ContaNaoEncontradaException("Cliente não encontrado no Itau")
         }
